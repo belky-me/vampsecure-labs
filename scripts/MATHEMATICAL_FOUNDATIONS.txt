@@ -1,0 +1,79 @@
+================================================================================
+VAMPSECURE INTELLIGENCE - ANEXO TÉCNICO: FUNDAMENTOS MATEMÁTICOS
+================================================================================
+
+Este documento detalla las fórmulas y principios lógicos aplicados en las 
+herramientas del ecosistema VampSecure para el análisis y protección de datos.
+
+--------------------------------------------------------------------------------
+1. ENTROPÍA DE SHANNON (Aplicada en: scripts/entropy_watch/)
+--------------------------------------------------------------------------------
+La entropía de Shannon cuantifica la incertidumbre o el grado de "sorpresa" 
+contenido en una fuente de información. En ciberseguridad, se utiliza para 
+distinguir entre archivos de datos estructurados (baja entropía) y archivos 
+cifrados o comprimidos (alta entropía).
+
+Fórmula:
+$$H(X) = -\sum_{i=0}^{n-1} P(x_i) \log_2 P(x_i)$$
+
+Donde:
+- H(X): Entropía total del archivo (medida en bits por byte).
+- n: El número de posibles símbolos (para un byte, n = 256).
+- P(x_i): La probabilidad de aparición del byte 'i' en el archivo.
+- log2: Logaritmo en base 2, que nos permite medir la información en bits.
+
+Interpretación:
+- Un archivo de texto plano suele tener un H(X) entre 3.5 y 5.0 debido a la 
+  repetición de caracteres y estructuras del lenguaje.
+- Un archivo cifrado por Ransomware tiende a un H(X) de 8.0 (el máximo teórico), 
+  ya que el cifrado busca que la distribución de bytes sea perfectamente 
+  uniforme, pareciéndose al ruido blanco.
+
+--------------------------------------------------------------------------------
+2. OPERACIÓN LÓGICA XOR (Aplicada en: scripts/covert_icmp/)
+--------------------------------------------------------------------------------
+El cifrado XOR (Exclusive OR) es una operación fundamental en criptografía 
+simétrica. Se utiliza en el túnel ICMP de VampSecure para ofuscar la carga útil 
+(payload) y evitar la detección por firmas de texto plano.
+
+Lógica de la operación:
+$$P \oplus K = C$$
+$$C \oplus K = P$$
+
+Donde:
+- P (Plaintext): El mensaje original en binario.
+- K (Key): La clave secreta de ofuscación.
+- C (Ciphertext): El mensaje ofuscado resultante.
+- ⊕: Símbolo de la operación XOR.
+
+Tabla de Verdad:
+| A | B | A ⊕ B |
+|---|---|-------|
+| 0 | 0 |   0   |
+| 0 | 1 |   1   |
+| 1 | 0 |   1   |
+| 1 | 1 |   0   |
+
+Propiedad Crítica:
+La operación XOR es reversible. Al aplicar la misma clave (K) sobre el texto 
+cifrado (C), se recupera exactamente el mensaje original (P). Es computacionalmente 
+extremadamente eficiente y, cuando se usa con claves aleatorias de la longitud 
+del mensaje (One-Time Pad), es matemáticamente irrompible.
+
+--------------------------------------------------------------------------------
+3. CODIFICACIÓN BASE64 (Aplicada en: scripts/covert_icmp/)
+--------------------------------------------------------------------------------
+Aunque no es una fórmula de cifrado, Base64 es el sistema de numeración posicional 
+que usamos para representar datos binarios (generados por el XOR) en una cadena 
+de caracteres ASCII imprimibles.
+
+Fórmula de Proporción:
+Base64 utiliza un alfabeto de 64 caracteres ($2^6$). Convierte grupos de 3 bytes 
+(24 bits) en 4 caracteres de 6 bits cada uno.
+
+$$Tamaño_{salida} \approx \frac{4}{3} \times Tamaño_{entrada}$$
+
+Esto garantiza que los datos interceptados por el túnel ICMP no corrompan la 
+estructura del paquete de red, manteniendo la compatibilidad con todos los 
+nodos de transporte.
+================================================================================

@@ -1,0 +1,33 @@
+
+================================================================================
+VAMPSECURE INTELLIGENCE - ENTROPY-WATCH v1.3
+================================================================================
+
+DESCRIPCIÓN:
+Herramienta de defensa proactiva (Blue Team) diseñada para detectar procesos de 
+cifrado malicioso (Ransomware) en tiempo real mediante el análisis estadístico 
+de la entropía de Shannon.
+
+CARACTERÍSTICAS:
+- Cálculo dinámico de aleatoriedad (0.0 a 8.0 bits/byte).
+- Monitoreo recursivo de directorios.
+- Protocolo de aislamiento automático (Cuarentena).
+- Timestamp sincronizado con el sistema local.
+
+USO:
+python3 scripts/entropy_watch/entropy_watch.py [-p RUTA_A_VIGILAR]
+
+PRUEBA DE CONCEPTO (PoC):
+1. Iniciar el monitor:
+   docker exec -it vamp_python_lab python scripts/entropy_watch/entropy_watch.py -p ./test_zone
+
+2. Generar archivo legítimo:
+   echo "Texto plano con baja entropia" > ./test_zone/safe.txt
+
+3. Simular ataque (Cifrado con alta entropía):
+   head -c 2048 /dev/urandom > ./test_zone/ataque.dat
+
+RESULTADO ESPERADO:
+El sistema detectará el pico de entropía (> 7.0), emitirá una alerta crítica y 
+moverá 'ataque.dat' a la carpeta 'quarantine/' automáticamente.
+================================================================================

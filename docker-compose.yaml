@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  # Nodo de Laboratorio: Python y Herramientas de Red
+  python-tester:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: vamp_python_lab
+    # Cargamos el archivo .env desde su ubicación específica
+    env_file:
+      - ./scripts/passive_recon/.env
+    volumes:
+      - .:/app
+      - /etc/localtime:/etc/localtime:ro  # <-- ESTO SINCRONIZA LA HORA CON TU MAC
+      - /etc/timezone:/etc/timezone:ro
+    # Mantenemos los privilegios para ICMP y herramientas de red
+    cap_add:
+      - NET_ADMIN
+    network_mode: "bridge"
+    working_dir: /app

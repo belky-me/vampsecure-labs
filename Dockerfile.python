@@ -1,0 +1,35 @@
+# Imagen base estable para 2026
+FROM python:3.11-slim
+
+# Evitar que Python genere archivos .pyc y forzar logs en tiempo real
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# 1. INSTALACIÓN DE HERRAMIENTAS DE SISTEMA (BAJO NIVEL)
+# libpcap-dev/tcpdump: Para el túnel ICMP (Scapy)
+# iputils-ping: El comando 'ping' real
+# curl: Para pruebas de API manuales
+# gcc/python3-dev: Para compilar librerías si es necesario
+RUN apt-get update && apt-get install -y \
+    libpcap-dev \
+    tcpdump \
+    iproute2 \
+    iputils-ping \
+    curl \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. GESTIÓN DE DEPENDENCIAS PYTHON
+WORKDIR /app
+
+# Copiamos el archivo de requerimientos primero para aprovechar la caché de Docker
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 3. CONFIGURACIÓN FINAL
+# Copiamos el resto del código (aunque se sobreescribirá por el volumen en Compose)
+COPY . .
+
+# Mantener el nodo en escucha infinita para ejecución de comandos
+CMD ["tail", "-f", "/dev/null"]

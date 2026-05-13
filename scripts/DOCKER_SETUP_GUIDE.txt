@@ -1,0 +1,41 @@
+
+================================================================================
+GUÍA DE DESPLIEGUE - LABORATORIO VAMPSECURE
+================================================================================
+
+Este documento detalla cómo montar el entorno de laboratorio utilizando Docker, 
+asegurando que todas las herramientas tengan los permisos de red necesarios.
+
+REQUISITOS:
+- Docker Desktop instalado.
+- Docker Compose v2.0+.
+
+ESTRUCTURA DE ARCHIVOS:
+.
+├── docker-compose.yaml
+├── Dockerfile.python
+├── requirements.txt
+└── scripts/
+    ├── entropy_watch/
+    ├── covert_icmp/
+    └── passive_recon/
+
+CONFIGURACIÓN DE DOCKERFILE.PYTHON:
+Debe incluir 'libpcap-dev', 'tcpdump', 'iproute2', 'iputils-ping' y 'curl' para 
+que las herramientas de red funcionen correctamente.
+
+CONFIGURACIÓN DE DOCKER-COMPOSE:
+Es CRÍTICO incluir la capacidad 'cap_add: - NET_ADMIN' para que el túnel ICMP 
+pueda interceptar tráfico de red.
+
+PASOS PARA INICIAR:
+1. Clonar el repositorio.
+2. Construir e iniciar contenedores:
+   docker-compose up -d --build
+3. Verificar estado:
+   docker ps
+
+CONEXIÓN AL LABORATORIO:
+Para ejecutar cualquier herramienta:
+docker exec -it -u root vamp_python_lab bash
+================================================================================

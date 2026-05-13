@@ -1,0 +1,36 @@
+# Secrets — NUNCA subir al repo
+.env
+*.env
+*.key
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Binarios compilados
+scripts/shellcode_runner/vamp_shell_lab
+
+# Directorios de trabajo local
+scripts/quarantine/
+scripts/test_zone/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Reports generados
+scripts/cve_oracle/reports/*.txt
+*.html
+*.json
+
+# IDE
+.idea/
+.vscode/
