@@ -7,14 +7,13 @@ services:
       context: .
       dockerfile: Dockerfile.python
     container_name: vamp_python_lab
-    # Cargamos el archivo .env desde su ubicación específica
     env_file:
-      - ./scripts/passive_recon/.env
+      - ./scripts/passive_recon/.env  # copy from .env.example
     volumes:
       - .:/app
-      - /etc/localtime:/etc/localtime:ro  # <-- ESTO SINCRONIZA LA HORA CON TU MAC
+      - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-    # Mantenemos los privilegios para ICMP y herramientas de red
+    # NET_ADMIN required for ICMP tunnel and ARP tools
     cap_add:
       - NET_ADMIN
     network_mode: "bridge"
